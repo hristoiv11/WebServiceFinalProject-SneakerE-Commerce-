@@ -1,0 +1,55 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Container.puml
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+
+!include FONTAWESOME/users.puml
+
+AddElementTag("microService", $shape=EightSidedShape(), $bgColor="CornflowerBlue", $fontColor="white", $legendText="micro service\neight sided")
+AddElementTag("storage", $shape=RoundedBoxShape(), $bgColor="lightSkyBlue", $fontColor="white")
+AddRelTag(aggregate_root, $lineColor="red")
+
+LAYOUT_TOP_DOWN()
+'LAYOUT_WITH_LEGEND()
+SHOW_PERSON_OUTLINE()
+'HIDE_STEREOTYPE()
+
+Person(customer,"Customer","Customer of the e-commerce")
+System_Boundary(e_commerceSneakers,"E-Commerce for Sneakers System"){
+
+    Container(webapp,"Web Application","React,JS","Provides the content and the single page application of the E-commerce system for Sneakers to the browser.")
+    Container(samotnapage,"FrontEnd for the Sneaker E-commerce","React,JS","Customers have their functionality via the browser they choose to access from")
+    Container(api_gateway,"Api-Gateway","Java,Spring Boot","Provides access through JSON/REST HTTPS API")
+    Container(purchases_service,"purchases-service","Java,Spring Boot","Provides purchases use through aggregator pattern via JSON/REST HTTPS API",$tags="microService")
+    Container(customers_service,"customers-service","Java,Spring Boot","Provides customer use through JSON/REST HTTPS API",$tags="microService")
+    Container(inventory_service,"inventory-service","Java,Spring Boot","Provides inventory use through JSON/REST HTTPS API",$tags="microService")
+    Container(sneakers_service,"sneakers-service","Java,Spring Boot","Provides sneakers use through JSON/REST HTTPS API",$tags="microService")
+
+    ContainerDb(sneakers_db,"Sneakers DB","Stores sneakers information",$tags="storage")
+    ContainerDb(inventory_db,"Inventory DB","Postgres","Stores inventory information",$tags="storage")
+    ContainerDb(customers_db,"Customers DB","Stores customers information",$tags="storage")
+    ContainerDb(purchases_db,"Purchases DB","Mongo DB","Stores purchases information",$tags="storage")
+
+    Rel(customer,webapp,"Visits sneaker-commerce.com","HTTPS")
+    Rel_R(webapp,samotnapage,"Delivers to the customer's browser")
+    Rel(customer,samotnapage,"Browse through the market , sneakers that are for sale","HTTPS")
+    Rel(samotnapage,api_gateway,"Doing API calls to","JSON/REST/HTTPS")
+    Rel(api_gateway,sneakers_service,"Doing API calls to","JSON/REST/HTTPS")
+    Rel(api_gateway,customers_service,"Doing API calls to","JSON/REST/HTTPS")
+    Rel(api_gateway,inventory_service,"Doing API calls to","JSON/REST/HTTPS")
+    Rel(api_gateway,purchases_service,"Doing API calls to","JSON/REST/HTTPS")
+
+    Rel(purchases_service,customers_service,"Doing API calls","JSON/REST/HTTPS",$tags="aggregate_root")
+    Rel(purchases_service,inventory_service,"Doing API calls","JSON/REST/HTTPS",$tags="aggregate_root")
+    Rel(purchases_service,sneakers_service,"Doing API calls","JSON/REST/HTTPS",$tags="aggregate_root")
+
+    Rel_D(sneakers_service,sneakers_db,"Reads and writes to","JDBC/SQL")
+    Rel_D(customers_service,customers_db,"Reads and writes to","JDBC/SQL")
+    Rel_D(inventory_service,inventory_db,"Reads and writes to","JDBC/SQL")
+    Rel(purchases_service,purchases_db,"Reads and writes to","Mongo")
+
+
+}
+
+@enduml

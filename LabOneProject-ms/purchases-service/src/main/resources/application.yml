@@ -1,0 +1,80 @@
+# Default Spring Profile
+server:
+  error:
+    include-message: always
+
+logging:
+  level:
+    root: INFO
+    com.LabOneProject: DEBUG
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+
+---
+  # for
+
+spring:
+    config:
+      activate:
+        on-profile: test
+
+  #for flapdoodle
+    data:
+      mongodb:
+        username: user
+        password: pwd
+        host: localhost
+        port: 0      #SHOULD BE 0?
+        database: order-db
+        authentication-database: admin
+        auto-index-creation: true
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 5.0.5
+
+app:
+  customers-service:
+    host: localhost
+    port: 7001
+  sneakers-service:
+    host: localhost
+    port: 7002
+  inventory-service:
+    host: localhost
+    port: 7003
+
+---
+
+  # for docker
+
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+  data:
+    mongodb:
+      username: user
+      password: pwd
+      host: mongodb
+      port: 27017
+      database: order-db
+      authentication-database: admin
+      auto-index-creation: true
+
+server.port: 8080
+
+  #spring.datasource.hikari.initializationFailTimeout: 60000
+
+
+app:
+  customers-service:
+    host: customers-service
+    port: 8080
+  sneakers-service:
+    host: sneakers-service
+    port: 8080
+  inventory-service:
+    host: inventory-service
+    port: 8080

@@ -1,0 +1,161 @@
+@startuml
+hide circle
+top to bottom direction
+
+!define ENTITY(entityName) class entityName << Entity >>
+!define AGGREGATE(aggregateName) class aggregateName << Aggregate >>
+!define AGGREGATE_ROOT(aggregateRootName) class aggregateRootName << Aggregate Root >>
+!define AGGREGATE_ROOT_ENTITY(aggregateRootEntityName) class aggregateRootEntityName << Aggregate Root >> << Entity >>
+!define VALUE_OBJECT(valueObjectName) class valueObjectName << Value Object >>
+!pragma useVerticalIf on
+skinparam dpi 350
+skinparam packageStyle rectangle
+skinparam rectangle{
+  e  BackgroundColor #f7f4eb
+    BorderColor Black
+}
+
+rectangle E-CommerceSystemSneakers #line.dashed{
+
+    Package "Catalog Domain (Supportive sub-domain)" <<Rectangle>> #Lavender{
+
+        ENTITY(Sneaker) #yellow {
+            model:String
+            price:String
+            size:Double
+            color:String
+            releaseYear:String
+            availableStore:String
+            description:String
+            type:String
+        }
+
+        ENTITY(Brand) #yellow {
+            name:String
+            associatedCelebrity:String
+            locationOfMainHeadquarters:String
+            description:String
+        }
+
+
+        VALUE_OBJECT(Founder){
+            fName:String
+            lName:String
+            dob:LocalDate
+            country:String
+
+        }
+
+        VALUE_OBJECT(SneakerIdentifier){
+            sneakerId:UUID
+        }
+
+        VALUE_OBJECT(BrandIdentifier){
+            brandId:UUID
+        }
+
+        Sneaker "1" o-- "1..*" BrandIdentifier
+        Founder "1..*" --o "1" Brand
+        Sneaker -- SneakerIdentifier
+        Brand -- BrandIdentifier
+
+        }
+
+        Package "Order Sub-domain(Core sub-domain)" <<Rectangle>> #Violet{
+
+        note "Invariant: [When a sneaker is purchased i.e. order.status is set to COMPLETED]" as inventoryInvariant1
+
+        AGGREGATE_ROOT_ENTITY(Order) #yellow {
+
+            quantity:Integer
+        }
+
+        VALUE_OBJECT(OrderStatus){
+               status:Status
+
+        }
+
+        VALUE_OBJECT(ShippingAddress){
+
+            street:String
+            city:String
+            state:String
+            country:String
+            postalCode:String
+
+        }
+
+        VALUE_OBJECT(OrderIdentifier){
+
+            orderId: UUID
+        }
+
+       Order o-- OrderStatus
+       Order "1" o-- "1..*"ShippingAddress
+       Order -- OrderIdentifier
+
+        }
+
+        Package "Inventory Sub-domain(Supportive sub-domain)" <<Rectangle>> #LightGreen{
+
+        ENTITY(InventoryItem) #yellow {
+
+        }
+
+        VALUE_OBJECT(StockLevel){
+              stockLevel:Integer
+              restockLevel:Integer
+        }
+
+        VALUE_OBJECT(InventoryItemIdentifier){
+
+            inventoryId:UUID
+        }
+
+
+        InventoryItem *--  StockLevel
+        InventoryItem "1" -- InventoryItemIdentifier
+         Order o-- InventoryItemIdentifier
+         SneakerIdentifier -- InventoryItem
+
+        }
+
+        Package "Customer Sub-domain(Supporting sub-domain)" <<Rectangle>> #Brown{
+
+        ENTITY(Customer) #yellow {
+             fName:String
+             lName:String
+             number:String
+             email:String
+
+        }
+
+        VALUE_OBJECT(Wishlist){
+            customerPreferredSneaker:String
+            customerPreferredBrand:String
+            customerPreferredSize:Double
+
+        }
+
+        VALUE_OBJECT(CustomerStatus){
+            status:Status
+        }
+
+        VALUE_OBJECT(CustomerIdentifier){
+
+            customerId:UUID
+        }
+
+        Customer "1" o-- "1..*" Wishlist
+        Customer o-- CustomerStatus
+        Customer -- CustomerIdentifier
+        Order o-- SneakerIdentifier
+
+        }
+
+        Order o-- CustomerIdentifier
+      }
+}
+
+@enduml
+

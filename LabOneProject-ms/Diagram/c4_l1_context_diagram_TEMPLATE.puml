@@ -1,0 +1,14 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Context.puml
+
+title System Context Diagram for E-Commerce Sneaker System
+
+Person(customer,"Customer","Customer of the e-commerce")
+System(inventory,"Inventory System", "Manages stock and restock levels and product availability for the e-commerce platform")
+System(e_commerceSneakers,"E-Commerce for Sneakers System", "Give the opportunity to a Customer to buy a sneaker using his preferences")
+
+Rel(customer, e_commerceSneakers,"Browse through the market , sneakers that are for sale","Uses")
+Rel(e_commerceSneakers, inventory,"Checks in the inventory if there is a sneaker of a certain size(10 for ex),available in stock","Uses")
+'Rel(inventory,e_commerceSneakers,"Sends confirmation to the E-commerce system if a sneaker of size 10 is available in the inventory","Uses")
+'SHOW_LEGEND()
+@enduml
