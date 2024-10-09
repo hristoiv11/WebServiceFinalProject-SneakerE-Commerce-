@@ -1,7 +1,7 @@
 Sneaker E-commerce - Microservices-based Architecture
 -
 This project is a microservices-based sneaker e-commerce platform.The system allows users to manage sneaker-related data, customer profiles, inventory, and purchases through independent microservices. The microservices architecture provides scalability, flexibility, and ease of maintenance by breaking down the application into multiple smaller services that can function independently.
-The project follows Domain-Driven Design (DDD) principles and integrates with multiple databases, including both SQL (MySQL, PostgreSQL) MongoDB. Each microservice exposes RESTful APIs for performing CRUD operations.
+The project follows Domain-Driven Design (DDD) principles and integrates with multiple databases, including both SQL (MySQL, PostgreSQL) and MongoDB. Each microservice exposes RESTful APIs for performing CRUD operations.
 
 FEATURES
 -
